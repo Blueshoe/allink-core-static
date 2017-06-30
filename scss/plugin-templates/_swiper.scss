@@ -113,8 +113,9 @@ Global Swiper Custom Styles
     }
 }
 
+// Slider fullscreen button
 .swiper-button-fullscreen {
-    display: none;
+    float: right;
 }
 
 // Pagination
@@ -206,6 +207,7 @@ Global Swiper Custom Styles
 // Slider counter
 .swiper-counter {
     display: none;
+    float: left;
 
     &.active {
         display: block;
@@ -254,3 +256,16 @@ Slider in Detail View
 
 }
 
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Print Styles
+
+*/
+
+// background images can not easily be printed, so we simply hide the swiper galleries
+.swiper-container {
+    @include print() {
+        display: none !important;
+    }
+}

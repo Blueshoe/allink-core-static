@@ -3,6 +3,7 @@
 // Author: Brian Grinstead
 // License: MIT
 // Requires: jQuery, spectrum.css
+// Modified by allink AG
 
 $(function () {
     // TinyColor.js - <https://github.com/bgrins/TinyColor> - 2011 Brian Grinstead - v0.5
@@ -789,7 +790,7 @@ $(function () {
     window.tinycolor = tinycolor;
 
 
-   
+
 
     var defaultOpts = {
 
@@ -801,7 +802,7 @@ $(function () {
         hide: noop,
 
         // Options
-        color: false,
+        color: 'transparent',
         flat: false,
         showInput: false,
         showButtons: true,
@@ -1264,6 +1265,11 @@ $(function () {
                 realHex = realColor.toHexString();
 
             // Update the replaced elements background color (with actual selected color)
+            if (realColor.alpha === 0) {
+                previewElement.addClass('transparent');
+            }else {
+                previewElement.removeClass('transparent');
+            }
             previewElement.css("background-color", realColor.toRgbString());
 
             // Update the text entry input as it changes happen
@@ -1579,25 +1585,31 @@ $(function () {
         }
     });
 
-    for(var i = 0; i < window.colorFields.length; i++){
-        var id = window.colorFields[i].id;
-        var color = window.colorFields[i].color;
-        var showPaletteOnly = window.colorFields[i].showPaletteOnly;
-        var palette = window.colorFields[i].palette;
-        var localStorageKey = window.colorFields[i].localStorageKey;
-        $(id).spectrum({
-            preferredFormat: "hex",
-            color: color,
-            clickoutFiresChange: true,
-            showInput: true,
-            showInitial: true,
-            showPalette: true,
-            showSelectionPalette: false,
-            localStorageKey: localStorageKey,
-            showButtons: true,
-            showPaletteOnly: showPaletteOnly,
-            palette: palette,
-        });
-    };
+    if (window.colorFields && window.colorFields.length > 0) {
+        for(var i = 0; i < window.colorFields.length; i++){
+            var id = window.colorFields[i].id;
+            var color = window.colorFields[i].color;
+            var showPaletteOnly = window.colorFields[i].showPaletteOnly;
+            var palette = window.colorFields[i].palette;
+            var localStorageKey = window.colorFields[i].localStorageKey;
+            // when creating a new entry (e.g. content section), we get "None" as a color value
+            if (color === 'None') {
+                color = 'transparent';
+            }
+            $(id).spectrum({
+                preferredFormat: "hex",
+                color: color,
+                clickoutFiresChange: true,
+                showInput: true,
+                showInitial: true,
+                showPalette: true,
+                showSelectionPalette: false,
+                localStorageKey: localStorageKey,
+                showButtons: true,
+                showPaletteOnly: showPaletteOnly,
+                palette: palette,
+            });
+        };
+    }
 
 });

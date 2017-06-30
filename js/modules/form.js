@@ -94,32 +94,6 @@ $(function(){
             .on( 'blur', function(){ $input.removeClass( 'has-focus' ); });
         });
 
-
-        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-        Enable auto-expand on <textarea>-elements
-
-        Applied globally on all textareas with the "data-auto-expand" attribute
-
-        <textarea rows="3" ata-auto-expand></textarea>
-
-        Inspiration: http://codepen.io/vsync/pen/frudD
-
-        */
-
-        // $(document)
-        //     .one('input[data-auto-expand]', 'textarea[data-auto-expand]', function(){
-        //         var savedValue = this.value;
-        //         this.value = '';
-        //         this.baseScrollHeight = this.scrollHeight;
-        //         this.value = savedValue;
-        //     })
-        //     .on('input[data-auto-expand]', 'textarea[data-auto-expand]', function(){
-        //         var minRows = this.getAttribute('rows')|0, rows;
-        //         this.rows = minRows;
-        //         rows = Math.ceil((this.scrollHeight - this.baseScrollHeight) / 17);
-        //         this.rows = minRows + rows;
-        //     });
     }
 
     function getSelectedText() {

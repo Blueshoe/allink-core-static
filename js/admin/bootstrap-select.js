@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-Bootstrap Select
+Admin Bootstrap Select
 
 Docs: https://silviomoreto.github.io/bootstrap-select/options/
 
@@ -15,7 +15,6 @@ $(function(){
         $('.selectpicker').selectpicker({
           style: 'btn-default bs-placeholder',
           size: 'auto',
-          dropupAuto: true, // per default, let bootstrap select choose where to dislpay the dropdown (above or below). Should you want to force to display the form below, add the `data-dropup-auto="false"` attribute to the desired <select> element.
         });
     }
 

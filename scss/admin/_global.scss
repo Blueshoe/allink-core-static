@@ -94,6 +94,20 @@ Visually separate blocks
         }
     }
 
+    // inline fields padding fix
+    .tabular table tbody td {
+        padding-left: 2px !important;
+        &.delete {
+            padding-left: 10px !important;
+        }
+    }
+
+    // input[type=checkbox],
+    input[type=radio] {
+        top: -4px;
+    }
+
+    // general module style
     fieldset.module {
 
         border-radius: 2px !important;
@@ -135,6 +149,11 @@ Visually separate blocks
         p.help {
             margin-top: 0 !important;
             padding-top: 10px !important;
+            font-size: 12px !important;
+            strong,
+            em {
+                font-size: 12px !important;
+            }
         }
 
         div.form-row {
@@ -208,6 +227,20 @@ Visually separate blocks
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+Attributes Field
+
+*/
+
+.djangocms-attributes-field {
+    .related-widget-wrapper {
+        margin-top: 10px;
+    }
+}
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
 Manual Order Package
 
 */
@@ -252,9 +285,56 @@ Filer field
 .filer-dropzone {
     // file has been selected
     &.js-object-attached {
+        min-height: 122px !important;
+        // already selected when form is loaded
         .filerFile {
             top: 50% !important;
             transform: translate(0,-50%);
+            text-align: left !important;
+            > a {
+                img {
+                    width: 55px !important;
+                    height: 55px !important;
+                }
+            }
+        }
+        // new image uploaded
+        .dz-thumbnail {
+            width: 55px !important;
+            height: 55px !important;
+            img {
+                width: 100% !important;
+                height: 100% !important;
+            }
+        }
+    }
+}
+
+// no file selected: the link
+form .form-row .js-filer-dropzone.filer-dropzone .filerFile .related-lookup {
+    float: none !important;
+}
+
+// file selected
+form .form-row .filer-dropzone .filerFile .dz-name,
+form .form-row .filer-dropzone .filerFile .description_text {
+    margin-top: 16px;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Button/Link Plugin
+
+*/
+
+.app-djangocms_button_link {
+    .messagelist {
+        display: none;
+    }
+    &.popup ul.messagelist {
+        + #content {
+            margin-top: 20px !important;
         }
     }
 }

@@ -34,8 +34,17 @@ $(function(){
             $(window).trigger('form-modal:opened');
             $(window).trigger('initFormModalClose');
         },
-        closeMethods: []
+        closeMethods: ['button']
     });
+
+    // modify tingle markup on page load (while the modal is hidden)
+    setTimeout(function(){
+        // relocate close button
+        var $form_modal = $('.tingle-modal.form-modal');
+        var close_btn = $form_modal.find('.tingle-modal__close').get(0);
+        var modal_content = $form_modal.find('.tingle-modal-box').get(0);
+        modal_content.appendChild(close_btn);
+    },500);
 
     // click handler
     function openFormModal(element,event) {
@@ -60,19 +69,28 @@ $(function(){
 
     function initFormModalTrigger(){
         // init all trigger links and loop
-        $('.toggle-form-modal,[data-trigger-form-modal]').each(function(i) {
-            // stop multiple event listeners from firing multiple times by removing (off()) and adding (on()) the event listener
-            $(this).
-                off('click').
-                on('click',
-                function(event){
-                    // instantly toggle site overlay (improves "felt performance")
-                    $(window).trigger('showSiteOverlay');
-                    // load softpage
-                    event.preventDefault();
-                    openFormModal(this,event);
-                }
-            );
+        $('.toggle-form-modal:not([data-softpage-disabled]),[data-trigger-form-modal]:not([data-softpage-disabled])').each(function(i) {
+            // stop multiple event listeners on the same element by adding an initialized attribute that we can check the next time we call this function
+            // init
+            var $trigger = $(this);
+            var initialized_attr = 'data-trigger-initialized';
+            // check for initialized trigger
+            var trigger_initialized = $trigger.attr(initialized_attr);
+            // NOT initialized yet
+            if (typeof trigger_initialized === 'undefined') {
+                $trigger.
+                    on('click',
+                    function(event){
+                        // instantly toggle site overlay (improves "felt performance")
+                        $(window).trigger('showSiteOverlay');
+                        // load softpage
+                        event.preventDefault();
+                        openFormModal(this,event);
+                    }
+                );
+                // mark as initialized
+                $trigger.attr(initialized_attr,'');
+            }
         });
     }
 

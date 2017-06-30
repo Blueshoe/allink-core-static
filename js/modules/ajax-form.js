@@ -40,6 +40,9 @@ export function sendAjaxForm($form) {
     // 1. in case an ID is defined, select that element
     if (container_id) {
         var $form_container = $('#' + container_id);
+        if ($form_container.length == 0) {
+            console.warn('The form\'s "data-form-container-id" is set to "' + container_id + '" but element can not be found in DOM');
+        }
     }
     // 2. default: use immediate parent
     else {
@@ -60,23 +63,22 @@ export function sendAjaxForm($form) {
             else {
                 $form_container.html(data);
             }
-            // Google Tag Manager
-            if (typeof dataLayer === 'undefined') {
-                // GTM not in use or not configured properly
-            }
             // Note: If there are errors that we couldn't catch with the JavaScript form validation we get a '206' status code from the form's view
-            else if (jqXHR.status === 206) {
+            if (jqXHR.status === 206) {
                 // something wrong while sending the form
             }
             // made it.. finally!
             else {
-                // hold on, is there a custom event defined?
-                if (custom_event) {
-                    // add values to array
-                    dataLayer.push({
-                        'event': custom_event,
-                        'form_id': custom_event_id
-                    });
+                // Google Tag Manager in use?
+                if (typeof dataLayer !== 'undefined') {
+                    // Is there a custom event defined?
+                    if (custom_event) {
+                        // add values to array
+                        dataLayer.push({
+                            'event': custom_event,
+                            'form_id': custom_event_id
+                        });
+                    }
                 }
             }
 

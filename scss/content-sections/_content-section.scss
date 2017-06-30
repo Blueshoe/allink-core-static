@@ -88,22 +88,13 @@ Default Content Section Styles
         }
     }
 
-    // section heading of a 'content plugin' entry needs extra padding, because the columns themselves have the column-padding
-    .main-col-container {
-        .section-heading {
-            > .heading {
-                @include column-paddings();
-                @include column-padding-sm-max();
-            }
-        }
-    }
-
     .col-container {
         @include clearfix();
     }
 
     // first and last sections
-    &:first-child {
+    &:first-child,
+    &.first {
         @include content-section-first();
         // within detail view
         .detail-view & {
@@ -120,8 +111,6 @@ Default Content Section Styles
 
     // reset container max-width within modal (softpage)
     .tingle-modal & {
-        padding: 0;
-        margin: 0;
         .container {
             max-width: none;
         }
@@ -154,6 +143,10 @@ Section Headings
         // h2
         .section-heading-h2 & {
             @include h2();
+        }
+        // h3
+        .section-heading-h3 & {
+            @include h3();
         }
         // prevent the section heading from being too wide. make it 2/3
         @media (min-width:$screen-md) {

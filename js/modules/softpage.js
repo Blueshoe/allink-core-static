@@ -47,7 +47,7 @@ $(function(){
     const softpage = new SoftPage({
         onPageLoaded: function(obj) {
             // scroll to top everytime a softpage is opened
-            obj.modal.modal.scrollTop = 0;
+            obj.modal.modal.querySelector('.tingle-modal-box').scrollTop = 0;
             // do stuff slighty delayed, so we get all the information we need
             setTimeout(function(){
                 // init page meta
@@ -58,7 +58,8 @@ $(function(){
                 if (modal_page_title_element != null) {
                     var modal_page_title = modal_page_title_element.textContent;
                 }else {
-                    console.warn('Softpage is missing #softpage-page-title.');
+                    // used during development phase, but no need anymore
+                    // console.warn('Softpage is missing #softpage-page-title.');
                 }
                 // Google Tag Manager
                 if (typeof dataLayer !== 'undefined') {
@@ -81,12 +82,21 @@ $(function(){
             $(window).trigger('softpage:closed');
             // remove variation definition
             $(obj.modal.modal).removeAttr('data-softpage-variation');
+            // remove any content (issue: video was still playing)
+            $(obj.modal.modal).find('.tingle-modal-box__content').empty();
         },
         onBeforeClose: function(){
-            // prevent closing of the softpage as long as the form modal is opened
+            // prevent closing of the softpage as long as..
+            // 1. the form modal is opened
             if ($('.tingle-modal.form-modal').hasClass('tingle-modal--visible')) {
                 return false;
-            }else {
+            }
+            // 2. the swiper fullscreen gallery is visible
+            else if($('html').hasClass('swiper-fullscreen-visible')) {
+                return false;
+            }
+            // default
+            else {
                 return true;
             }
         }
@@ -98,28 +108,53 @@ $(function(){
         // 1. Text Editor > All links that should trigger a softpage (added by e.g. button link plugin)
         // 2. App Content > If the Softpage option is enabled.
         $('a[data-trigger-softpage]:not([data-softpage-disabled]), [data-trigger-softpage] a:not([data-softpage-disabled])').each(function(i) {
-            // stop multiple event listeners from firing multiple times by removing (off()) and adding (on()) the event listener
-            $(this).
-                off('click').
-                on('click',
-                function(event){
-                    // init
-                    var softpage_content_id = '';
-                    var href = event.currentTarget.href;
-                    // optional: use a node's content instead of href-attribute
-                    var softpage_content_id = $(this).attr('data-softpage-content-id');
-                    // optional: get softpage variation string and set attribute
-                    var softpage_variation = $(this).attr('data-softpage-variation');
-                    if (softpage_variation) {
-                        $('.tingle-modal.softpage').attr('data-softpage-variation', softpage_variation);
+            // stop multiple event listeners on the same element by adding an initialized attribute that we can check the next time we call this function
+            // init
+            var $trigger = $(this);
+            var initialized_attr = 'data-trigger-initialized';
+            // check for initialized trigger
+            var trigger_initialized = $trigger.attr(initialized_attr);
+            // NOT initialized yet
+            if (typeof trigger_initialized === 'undefined') {
+                // add event listener
+                $trigger.
+                    on('click',
+                    function(event){
+                        // init
+                        var $trigger = $(this);
+                        var $softpage = $('.tingle-modal.softpage');
+                        var softpage_content_id = '';
+                        var href = event.currentTarget.href;
+                        // optional: use a node's content instead of href-attribute
+                        var softpage_content_id = $trigger.attr('data-softpage-content-id');
+                        // optional: get softpage variation string and set attribute
+                        var softpage_variation = $trigger.attr('data-softpage-variation');
+                        if (softpage_variation) {
+                            $softpage.attr('data-softpage-variation', softpage_variation);
+                        }
+                        // optional: we are about to display a CMS page within the softpage
+                        var softpage_cms_page = $trigger.attr('data-cms-page');
+                        if (typeof softpage_cms_page !== 'undefined' && softpage_cms_page !== false) {
+                            $softpage.attr('data-cms-page', '');
+                        }
+                        // special case: prevent softpage reload in case of a menu that has been toggled already and is about to be closed
+                        var softpage_already_toggled = $trigger.attr('data-softpage-toggled');
+                        if (typeof softpage_already_toggled !== 'undefined' && softpage_already_toggled !== false) {
+                            return true;
+                        }
+                        // instantly toggle site overlay (improves "felt performance")
+                        $(window).trigger('showSiteOverlay');
+                        // load softpage
+                        event.preventDefault();
+                        softpage.loadPage(href, true, softpage_content_id);
+                        // fixes bug in firefox: softpage text was selected - let's remove any selection
+                        document.getSelection().removeAllRanges();
                     }
-                    // instantly toggle site overlay (improves "felt performance")
-                    $(window).trigger('showSiteOverlay');
-                    // load softpage
-                    event.preventDefault();
-                    softpage.loadPage(href, true, softpage_content_id);
-                }
-            );
+                );
+                // mark as initialized
+                $trigger.attr(initialized_attr,'');
+            }
+
         });
     }
 
@@ -136,6 +171,21 @@ $(function(){
     });
     $(window).on('closeSoftpage', function() {
         closeSoftpage();
+    });
+
+    // clean up content when a CMS page is about to be displayed within a softpage
+    $(window).on('softpage:opened',function(){
+        // init
+        var $softpage = $('.softpage');
+        // check if CMS page attribute is set
+        var $softpage_content_container = $softpage.find('.tingle-modal-box__content');
+        var is_cms_page = $softpage.attr('data-cms-page');
+        if (typeof is_cms_page !== 'undefined' && is_cms_page !== false) {
+            // select/store the content we want to put inside the modal box content
+            var $ajax_page_container = $softpage.find('.site-content').children();
+            // empty the box content and append the just stored markup
+            $softpage_content_container.empty().append($ajax_page_container);
+        }
     });
 
 });

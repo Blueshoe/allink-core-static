@@ -19,13 +19,27 @@ picture.lazyloader {
     @include the-loader();
     transition: opacity $lazyloader-transition-duration;
     // modifier classes
+    &.icon-disabled,
     &.no-icon {
         &:before {
             display: none;
         }
     }
+    &.bg-disabled,
     &.no-bg {
-        background: transparent;
+        // this is stronger than setting a bg color
+        background: transparent !important;
+    }
+    // the background color variations
+    @each $nr, $color in $project-colors {
+        // set via templatetag
+        &.project-color-#{$nr} {
+            background-color: $color;
+        }
+        // set via image plugin
+        .image-container.project-color-#{$nr} & {
+            background-color: $color;
+        }
     }
     // we use the ratio "hack" on the picture element, so we can position the actual image absolute
     > img {

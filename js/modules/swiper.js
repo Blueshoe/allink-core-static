@@ -52,6 +52,9 @@ export function initiSwiperInstances(options) {
     if (!options.initialSlide) {
         options.initialSlide = 0;
     }
+    if (!options.fullscreen_active_class_delay) {
+        options.fullscreen_active_class_delay = 300;
+    }
 
     // loop through instances (that have NOT been initialized yet)
     $('.swiper-default:not(.swiper-initialized)').each(function(i) {
@@ -65,9 +68,17 @@ export function initiSwiperInstances(options) {
             return true;
         }
         // swiper counter dom node
-        var $counter = $('.swiper-counter');
+        var $counter = $swiper_instance.find('.swiper-counter');
+
         if ($counter) {
             $counter.addClass('active');
+        }
+
+        // local variable for loop. options.loop is a global setting for all swiper instances
+        let loop = options.loop;
+        // disable loop when attribute data-autoplay on .swiper-default element is present
+        if ($swiper_instance.attr('data-autoplay') === "false") {
+            loop = false;
         }
 
         // default
@@ -86,7 +97,7 @@ export function initiSwiperInstances(options) {
                 }
 
                 // if loop is false, stop autoplay
-                if (!options.loop) {
+                if (!loop) {
                     swiper.stopAutoplay();
                 }
             },
@@ -102,7 +113,7 @@ export function initiSwiperInstances(options) {
             slidesPerView: options.slidesPerView,
             spaceBetween: 30,
             direction: 'horizontal',
-            loop: options.loop, // important: Set to 'false' when scrollbar is enabled
+            loop: loop, // important: Set to 'false' when scrollbar is enabled
             grabCursor: true,
             initialSlide: options.initialSlide,
 
@@ -118,13 +129,20 @@ export function initiSwiperInstances(options) {
 
         // enter fullscreen mode
         $swiper_instance.find('[data-trigger-swiper-fullscreen]').on('click', function(e) {
+
+            // init
             e.preventDefault();
+            var $swiper_fullscreen_container = $('.swiper-fullscreen-container');
+            var $swiper_fullscreen = $('.swiper-fullscreen');
+
+            // prevent scrolling while lightbox is opened
+            $('html').addClass('scrolling-disabled');
 
             // stop autoplay of default swiper
             mySwiper.stopAutoplay();
 
             // clone container, remove all inline styles of old swiper instance
-            var $swiper_fullscreen_container = $('.swiper-fullscreen-container');
+
             $swiper_fullscreen_container
                 .children('.swiper-fullscreen').html($swiper_instance.clone())
                 .children('.swiper-default').removeClass('swiper-initialized')
@@ -137,16 +155,24 @@ export function initiSwiperInstances(options) {
             fullscreen_options.loop = false;
 
             setTimeout(function() {
-                initiSwiperInstances(fullscreen_options);
+                // init dimensions
+                initSwiperFullscreenDimensions();
+                // init close click
+                initSwiperFullscreenClose($swiper_fullscreen_container,$swiper_fullscreen);
                 // hide softpage if open
                 if ($('.tingle-modal.softpage').hasClass('tingle-modal--visible')) {
                     // do nothing
                 } else {
                     $(window).trigger('showSiteOverlay');
                 }
+                // instanciate swiper
+                initiSwiperInstances(fullscreen_options);
                 // make gallery visible
-                $swiper_fullscreen_container.addClass('active');
-                $('body').addClass('swiper-fullscreen-visible');
+                $('html').addClass('swiper-fullscreen-visible');
+                // add some delay
+                setTimeout(function(){
+                    $swiper_fullscreen_container.addClass('active');
+                },options.fullscreen_active_class_delay);
             }, 10);
         });
 
@@ -165,7 +191,10 @@ export function initiSwiperInstances(options) {
                 isEscape = evt.keyCode == 27;
             }
             if (isEscape) {
-                closeSwiperFullscreen();
+                // only call if the swiper is actually visible
+                if ($('html').hasClass('swiper-fullscreen-visible')) {
+                    closeSwiperFullscreen();
+                }
             }
         });
 
@@ -173,14 +202,101 @@ export function initiSwiperInstances(options) {
 
 }
 
-function closeSwiperFullscreen() {
-    if ($('.tingle-modal.softpage').hasClass('tingle-modal--visible')) {
-        $('body').removeClass('swiper-fullscreen-visible');
-    } else {
-        $('body').removeClass('swiper-fullscreen-visible');
-        $(window).trigger('hideSiteOverlay');
-    }
-    var $swiper_fullscreen_container = $('.swiper-fullscreen-container');
-    $swiper_fullscreen_container.removeClass('active');
-    $swiper_fullscreen_container.children('.swiper-fullscreen').empty();
+function initSwiperFullscreenClose($swiper_fullscreen_container,$swiper_fullscreen) {
+
+    // close fullscreen gallery when clicking anywhere on the container
+    $swiper_fullscreen_container.on('click',function(e){
+        closeSwiperFullscreen();
+    });
+
+    // prevent closing the gallery when clicking inside the gallery itself
+    $swiper_fullscreen.on('click',function(e){
+        e.stopPropagation();
+    });
+
 }
+
+function setSwiperFullscreenDimensions($inner,$gallery) {
+    // determine browser window dimensions
+    var window_width = $(window).width();
+    var window_height = $(window).height();
+    // TBD: option to leave some space for captions or spacings
+    var available_height = window_height-100;
+    // determine swiper dimensions
+    var swiper_width = $gallery.width();
+    var swiper_height = $gallery.height();
+    // the gallery doesn't fit into the window, let's reset the dimensions
+    if (swiper_height > available_height) {
+        var adjusted_swiper_height = available_height;
+        var adjusted_swiper_width = (available_height*swiper_width)/swiper_height;
+        $inner.width(adjusted_swiper_width);
+        $inner.height(adjusted_swiper_height);
+        $inner.addClass('dimensions-set');
+    }else {
+        // reset dimensions
+        $inner.css({
+            'width':'',
+            'height':'',
+        });
+        $inner.removeClass('dimensions-set');
+    }
+}
+
+function initSwiperFullscreenDimensions(width_has_changed=false) {
+
+    // init
+    var $container = $('.swiper-fullscreen-container');
+    var $inner = $container.find('.swiper-fullscreen');
+    var $gallery = $container.find('.swiper-container');
+
+    if (width_has_changed) {
+        // reset dimensions
+        $inner.css({
+            'width':'',
+            'height':'',
+        });
+        // remove initialized flag
+        $gallery.removeClass('swiper-initialized');
+        setTimeout(function(){
+            setSwiperFullscreenDimensions($inner,$gallery);
+            setTimeout(function(){
+                initiSwiperInstances();
+            },10);
+        },50);
+    }else {
+        setSwiperFullscreenDimensions($inner,$gallery);
+    }
+}
+
+function closeSwiperFullscreen() {
+    setTimeout(function(){
+        // if we opened a fullscreen gallery from within softpage, keep the site overlay visible
+        if ($('.tingle-modal.softpage').hasClass('tingle-modal--visible')) {
+            // nada
+        }
+        // otherwise, hide it!
+        else {
+            $(window).trigger('hideSiteOverlay');
+        }
+        $('html').removeClass('swiper-fullscreen-visible');
+        // init
+        var $swiper_fullscreen_container = $('.swiper-fullscreen-container');
+        var $swiper_fullscreen = $swiper_fullscreen_container.find('.swiper-fullscreen');
+        // remove active state
+        $swiper_fullscreen_container.removeClass('active');
+        // remove content
+        $swiper_fullscreen.empty();
+        // reset dimensions
+        $swiper_fullscreen.css({
+            'width':'',
+            'height':'',
+        });
+        // enable scrolling again
+        $('html').removeClass('scrolling-disabled');
+    },10);
+}
+
+$(window).on('viewportWidthHasChanged',function(){
+    var width_has_changed = true;
+    initSwiperFullscreenDimensions(width_has_changed);
+});

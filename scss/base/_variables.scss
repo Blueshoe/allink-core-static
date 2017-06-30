@@ -215,6 +215,8 @@ The AJAX container (where items are exchanged OR appended)
 $load-more-swop-category-transition-property:           opacity;
 $load-more-swop-category-transition-duration:           100ms;
 $load-more-swop-category-transition-timing-function:    ease-in;
+$load-more-swop-category-loader-spacing-top-xs:         100px;
+$load-more-swop-category-loader-spacing-top-sm:         150px;
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -310,12 +312,15 @@ $overlay-background-opacity-sm-max:        0.5;
 
 */
 
+$form-default-max-width:                600px;
+
 // `.form-group` margin top (except :first-child)
 $form-group-spacing-xs:                $grid-gutter-width/2;
 $form-group-spacing-md:                $grid-gutter-width;
 $form-group-spacing-xl:                $grid-gutter-width;
 
 // `.label-control` margin bottom
+$form-label-bold-enabled:              true;
 $form-label-spacing-xs:                $grid-gutter-width/4;
 $form-label-spacing-md:                $grid-gutter-width/2;
 $form-label-spacing-xl:                $grid-gutter-width/2;
@@ -326,6 +331,61 @@ $form-field-required-icon-color:       #ba1414;
 // for accessibility reasons, there is a visually hidden 'required' text, that is set to visibility:hidden, and therefore still uses up some space. By setting dimensions and overflow:hidden we avoid undesired results.
 $form-field-required-icon-height:      0.9em;
 $form-field-required-icon-width:       1em;
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+=Fieldset and =Legend
+
+*/
+
+// spacing between fieldsets
+$form-fieldset-spacing-xs:             $grid-gutter-width;
+$form-fieldset-spacing-md:             $grid-gutter-width*1.5;
+$form-fieldset-spacing-xl:             $grid-gutter-width*2;
+
+// legend heading size (h1, h2, h3 or h4)
+$form-legend-heading-size:             'h2';
+
+// form group container spacing to previous element (legend or .fieldset-text)
+$form-group-container-spacing-top-xs:  $grid-gutter-width;
+$form-group-container-spacing-top-md:  $grid-gutter-width;
+$form-group-container-spacing-top-xl:  $grid-gutter-width;
+
+// fieldset intro text spacing to legend
+$form-fieldset-text-spacing-top-xs:    $grid-gutter-width/2;
+$form-fieldset-text-spacing-top-md:    $grid-gutter-width/2;
+$form-fieldset-text-spacing-top-xl:    $grid-gutter-width/2;
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+=form =side by side
+
+*/
+
+$form-side-by-side-max-width:           800px;
+$form-side-by-side-label-width-md:      240px; // change according to longest label text
+$form-side-by-side-label-width-xxl:     300px; // change according to longest label text
+$form-side-by-side-label-gap:           $grid-gutter-width;
+$form-side-by-side-label-text-align:    left; // "text-align" values accepted
+
+// spacing between .form-group
+$form-side-by-side-group-spacing-top-xs:    $grid-gutter-width/4;
+$form-side-by-side-group-spacing-top-md:    $grid-gutter-width/4;
+$form-side-by-side-group-spacing-top-xl:    $grid-gutter-width/4;
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+=form =placeholder-enabled
+
+*/
+
+// spacing between .form-group
+$form-placeholder-enabled-group-spacing-top-xs:    $grid-gutter-width/4;
+$form-placeholder-enabled-group-spacing-top-md:    $grid-gutter-width/4;
+$form-placeholder-enabled-group-spacing-top-xl:    $grid-gutter-width/4;
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -350,7 +410,7 @@ $input-bg:                             #fff;
 // background color of disabled form field (e.g. text)
 $input-bg-disabled:                    $gray-lighter;
 // background color :focus
-$input-bg-focus:                       $white;
+$input-bg-focus:                       #fff;
 
 // Text color for `<input>`s
 $input-color:                          $gray;
@@ -378,6 +438,15 @@ $input-error-border-bottom-color:      $form-field-required-icon-color;
 $input-error-border-left-color:        transparent;
 $input-error-bg:                       #ffeded;
 
+// error label
+$form-label-error-color:               $black;
+
+// error message
+$form-field-error-spacing-xs:          $grid-gutter-width/4;
+$form-field-error-spacing-md:          $grid-gutter-width/4;
+$form-field-error-spacing-xl:          $grid-gutter-width/4;
+$form-field-error-color:               $brand-danger;
+
 // Placeholder text color
 $input-color-placeholder:              #999;
 
@@ -393,6 +462,65 @@ $input-group-addon-border-color:       $form-field-border-width;
 
 // Disabled cursor for form controls and buttons.
 $cursor-disabled:                      not-allowed;
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+INVERTED colors for form =Fields (.form-control)
+
+How to use it: Simply add a class `inverted-colors` to one of the parents of a form.
+
+Example:
+
+<div class="site-footer inverted-colors">
+    <form>
+        <input class="form-control" type="text" name="me-has-inverted-form-styles">
+    </form>
+</div>
+
+*/
+
+// set to false per default because of backward compatibility
+$form-field-inverted-enabled:                   false;
+
+$form-field-inverted-transition:                $form-field-transition;
+$form-field-inverted-border-radius-default:     $form-field-border-radius-default;
+$form-field-inverted-border-width:              $form-field-border-width;
+$form-field-inverted-border-style:              $form-field-border-style;
+$form-field-inverted-border-color:              $form-field-border-color;
+
+// background color
+$input-inverted-bg:                             $input-bg;
+// background color of disabled form field (e.g. type="text")
+$input-inverted-bg-disabled:                    $input-bg-disabled;
+// background color :focus
+$input-inverted-bg-focus:                       $input-bg-focus;
+
+// Text color for `<input>`s
+$input-inverted-color:                          $input-color;
+
+// horizontal padding settings for form fields and textarea
+$input-inverted-padding-left:                   $input-padding-left;
+$input-inverted-padding-right:                  $input-padding-right;
+
+// border color
+$input-inverted-border-top-color:               $input-border-top-color;
+$input-inverted-border-right-color:             $input-border-right-color;
+$input-inverted-border-bottom-color:            $input-border-bottom-color;
+$input-inverted-border-left-color:              $input-border-left-color;
+
+// border color :focus
+$input-inverted-border-top-color-focus:         $input-border-top-color-focus;
+$input-inverted-border-right-color-focus:       $input-border-right-color-focus;
+$input-inverted-border-bottom-color-focus:      $input-border-bottom-color-focus;
+$input-inverted-border-left-color-focus:        $input-border-left-color-focus;
+
+// ERROR styles
+$input-inverted-error-border-top-color:         $input-error-border-top-color;
+$input-inverted-error-border-right-color:       $input-error-border-right-color;
+$input-inverted-error-border-bottom-color:      $input-error-border-bottom-color;
+$input-inverted-error-border-left-color:        $input-error-border-left-color;
+$input-inverted-error-bg:                       $input-error-bg;
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -660,6 +788,12 @@ Bootstrap =Select Styles
 
 $select-btn-variation:                  'default'; // needs to be one of the variations defined in $btn-variations
 
+// this is a quick and dirty solution to fight the bootstrap-select loading jumping bloody effect
+// Important: Get height of rendered bootstrap-select at each breakpoint AFTER the typography has been approved.
+$select-placeholder-height-xs:          35px;
+$select-placeholder-height-md:          35px;
+$select-placeholder-height-xxl:         35px;
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -676,12 +810,24 @@ $file-upload-btn-variation:            'primary'; // needs to be one of the vari
 
 */
 
-$datepicker-default-width:              100%;
-$datepicker-default-max-width:          300px;
-$datepicker-default-input-bg:           $input-bg;
-$datepicker-default-btn-width:          35px;
-$datepicker-default-btn-icon:           '\e60e';
-$datepicker-default-btn-icon-size:      0.8em;
+// default button: calendar
+$datepicker-default-width:                  100%;
+$datepicker-default-max-width:              320px;
+$datepicker-default-input-bg:               $input-bg;
+$datepicker-default-btn-width:              30px;
+$datepicker-default-btn-icon:               '\e60e';
+$datepicker-default-btn-icon-size:          0.8em;
+$datepicker-default-btn-icon-color:         $black;
+$datepicker-default-btn-icon-color-hover:   $black;
+// time button
+$datepicker-time-btn-icon:                  '\e60e';
+// clear button
+$datepicker-clear-btn-icon:                 '\e209';
+$datepicker-clear-btn-icon-size:            1em;
+$datepicker-clear-btn-icon-color:           $black;
+$datepicker-clear-btn-icon-color-hover:     $black;
+$datepicker-clear-btn-position-right:       $datepicker-default-btn-width;
+$datepicker-clear-btn-transition:           all 150ms cubic-bezier(0.7, 0.91, 0.41, 1.64);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -700,6 +846,7 @@ $dropdown-toggle-icon-spacing-right:    1em;
 $dropdown-toggle-icon-spacing-left:     auto;
 $dropdown-toggle-padding-right:         3em;
 $dropdown-toggle-padding-left:          0.5em;
+$dropdown-link-padding:                 0;
 
 // Background for the dropdown menu.
 $dropdown-bg:                           #fff;
@@ -815,6 +962,7 @@ Used with responsive tables
 */
 
 // track
+$custom-scrollbar-track-size:                  12px;
 $custom-scrollbar-track-shadow:                none;
 $custom-scrollbar-track-bg:                    $gray-lighter;
 $custom-scrollbar-track-border-radius:         6px;
@@ -958,12 +1106,32 @@ $members-modal-spacing-bottom-xl:                   60px;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-=video plugin
+=Video Embed
 
 */
 
 $video-embed-default-ratio-width:               16;
 $video-embed-default-ratio-height:               9;
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+=Video File
+
+*/
+
+$video-controls-width:                      150px;
+$video-controls-height:                     150px;
+$video-controls-transition-property:        all;
+$video-controls-transition-duration:        150ms;
+$video-controls-transition-timing-function: ease-in;
+$video-controls-fallback-arrow-color:       $white;
+$video-controls-fallback-arrow-width:       25px;
+$video-controls-fallback-arrow-height:      25px;
+$video-controls-image-path-play:            false; // SVG recommended. Path to file e.g. '/static/images/video-controls/play.svg'
+$video-controls-image-width:                150px;
+$video-controls-image-height:               150px;
+
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
