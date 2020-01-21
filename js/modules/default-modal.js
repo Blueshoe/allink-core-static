@@ -168,10 +168,7 @@ $(function(){
             // init
             var $trigger = $(this);
             var initialized_attr = 'data-trigger-initialized';
-            // trigger not visible? Adios!
-            if($trigger.is(':visible') === false) {
-                return true;
-            }
+            // removed code: trigger code also for invisible elements (e.g. inside a dropdown)
             // check for initialized trigger
             var trigger_initialized = $trigger.attr(initialized_attr);
             // NOT initialized yet
