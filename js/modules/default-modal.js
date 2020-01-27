@@ -140,7 +140,8 @@ $(function(){
 
         // set content
         // set modal content and open
-        default_modal.setContent($content_container.html());
+        // remove the attribute data-trigger-initialized to allow the initialisation of click event listeners
+        default_modal.setContent($content_container.html().replace('data-trigger-initialized', ''));
         // check if header markup exists, but only get the first one
         let $header_markup = $content_container.find('.modal-header-markup').first();
         if ($header_markup.length > 0) {
